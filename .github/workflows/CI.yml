@@ -7,8 +7,16 @@ on:
   pull_request:
 
 jobs:
+  pre_build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: fkirc/skip-duplicate-actions@master
+        with:
+          github_token: ${{ github.token }}
+
   build:
     runs-on: ubuntu-18.04
+    needs: pre_build
     services:
       postgres:
         image: postgis/postgis:11-2.5
@@ -31,11 +39,6 @@ jobs:
           - spec/helpers spec/initializers spec/lib spec/views spec/features
 
     steps:
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.6.0
-      with:
-        access_token: ${{ github.token }}
-
     - uses: actions/checkout@v2
 
     - name: Use Ruby
@@ -93,7 +96,7 @@ jobs:
 
   notify:
     name: Notify Slack
-    needs: [build]
+    needs: build
     if: always()
     runs-on: ubuntu-18.04
     steps:
