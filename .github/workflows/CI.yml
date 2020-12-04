@@ -1,4 +1,4 @@
-name: inaturalist CI
+name: pleary/inaturalist CI
 
 on:
   push:
